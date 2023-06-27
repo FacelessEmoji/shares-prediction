@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Анализ акции - {{share}}</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+          integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'main/css/main.css'%}">
+</head>
+<body>
+
+
+<header>
+    <div class="logo">
+        <img src="{% static 'main/images/T_eng.svg'%}" alt="Логотип">
+    </div>
+    <div class="buttons">
+        <a href="/" class="button">Список акций</a>
+        <a href="/aboutUs" class="button">О нас</a>
+        <a href="/FAQ" class="button">FAQ</a>
+    </div>
+</header>
+
+<div class="header-block" style="background-color: whitesmoke" >
+
+    <div class="header-image">
+        <img src="../../static/main/images/simple_graph.jpg" alt="Изображение">
+    </div>
+    <div class="header-image">
+        <img src="../../static/main/images/simple_graph_2.jpg" alt="Изображение">
+    </div>
+    <div class="header-image">
+        <img src="../../static/main/images/simple_graph_3.jpg" alt="Изображение">
+    </div>
+    <div class="header-image">
+        <img src="../../static/main/images/simple_graph_4.jpg" alt="Изображение">
+    </div>
+
+
+</div>
+
+
+<div class="image-with-text">
+    <img src="../../static/main/images/logos_forShares/{{share}}.png" alt="Акция 1">
+    <p style="font-weight:bold;"> {{ share_info }}</p>
+</div>
+
+
+<!--  parent -->
+<div class="block"  style="background-color: whitesmoke">
+    <!--  flex-container  -->
+    <div class="block__row">
+        <!--  flex-element  -->
+        <div class="block__element block__element_2">
+            <!--  content  -->
+            <div class="block__content">
+               <div class="mySecondChart">
+                    <canvas id="mySecondChart"></canvas>
+            </div>
+            </div>
+        </div>
+        <!--  flex-element  -->
+        <!--  flex-element  -->
+        <div class="block__element block__element_3">
+            <!--  content  -->
+            <div class="block__content">
+                <div class="stock-forecast">
+                  <div class="forecast-item">
+                    <h3 class="company-name">Метод наименьших квадратов:</h3>
+                    <p class="price-forecast">{{leastSq}}</p>
+                  </div>
+                  <div class="forecast-item">
+                    <h3 class="company-name">Метод экспоненциального скользящего среднего:</h3>
+                    <p class="price-forecast">{{MovAv}}</p>
+                  </div>
+                  <div class="forecast-item">
+                    <h3 class="company-name">Прогноз модели машинного обучения основанной на рекуррентных нейросетях:</h3>
+                    <p class="price-forecast">{{RNN}}</p>
+                  </div>
+                </div>
+            </div>
+        </div>
+        <div class="block__element block__element_4">
+                    <!--  content  -->
+                    <div class="block__content" >
+                        <p {% if 'нестабильна' in fisher %}
+                            class="dis_block"
+                        {% else %}
+                            class="acc_block"
+                        {% endif %}> {{fisher}}</p>
+
+                        <p {% if 'нестабильна' in student %}
+                            class="dis_block"
+                        {% else %}
+                            class="acc_block"
+                        {% endif %}>{{student}}</p>
+                    </div>
+                </div>
+    </div>
+</div>
+
+
+{% block javascript %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+    var data1 = ({{ list1|safe }});
+    var data2 = ({{ list2|safe }});
+    var ema = ({{ ema|safe }});
+    console.log(ema);
+    var x = ({{ x|safe }});
+    console.log(x);
+    var labels = ({{ dd|safe }});
+    const sc = document.getElementById('mySecondChart');
+
+    new Chart(sc, {
+        type: 'line',
+        data: {
+            labels: x,
+            datasets: [{
+                label: 'Open Price',
+                data: data1,
+                borderWidth: 1
+            },{
+               label: 'Close Price',
+                data: data2,
+                borderWidth: 1
+            },{
+               label: 'Exponential Moving Average',
+                data: ema,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+
+
+
+<footer>
+    <div class="container">
+        <p>© 2023 Студенческий проект</p>
+
+        <p style="margin-left: 10px;">РУТ МИИТ УВП-212</p>
+    </div>
+</footer>
+</body>
+</html>
